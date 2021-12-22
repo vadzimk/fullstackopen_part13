@@ -1,0 +1,25 @@
+{
+  "type": "module",
+  "name": "part13_orm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "cli.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vadzimk/fullstackopen_part13.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vadzimk/fullstackopen_part13/issues"
+  },
+  "homepage": "https://github.com/vadzimk/fullstackopen_part13#readme",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "pg": "^8.7.1",
+    "sequelize": "^6.12.1"
+  }
+}
