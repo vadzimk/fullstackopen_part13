@@ -29,3 +29,5 @@ blogsRouter.delete('/api/blogs/:id', async (req, res) => {
     res.status(404).end()
   }
 });
+
+export default blogsRouter
