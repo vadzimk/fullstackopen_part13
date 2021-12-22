@@ -3,23 +3,20 @@ import express from 'express'
 const blogsRouter = express.Router()
 
 import {Blog} from '../models/index.js';
+import 'express-async-errors'  // error handling middleware
 
 blogsRouter.get('/', async (req, res) => {
-  try {
     const blogs = await Blog.findAll()
     res.json(blogs)
-  } catch (error) {
-    console.log(error);
-  }
 });
 
 blogsRouter.post('/', async (req, res) => {
-  try {
+
     const note = await Blog.create(req.body)
     res.json(note)
-  } catch (err) {
-    console.log(err)
-  }
+
+  // error is handled in middleware express-async-errors
+
 });
 
 blogsRouter.delete('/:id', async (req, res) => {
