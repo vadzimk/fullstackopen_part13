@@ -37,8 +37,7 @@ Blog.init(
       defaultValue: 0,
     },
   },
-  { sequelize, timestamps: false, modelName: 'blog' }
+  { sequelize, modelName: 'blog' }
 );
 
-Blog.sync();
 export default Blog
