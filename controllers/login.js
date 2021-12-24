@@ -8,7 +8,7 @@ const loginRouter = express.Router()
 loginRouter.post('/', async(req,res)=>{
   const user = await User.findOne({
     where: {
-      username: req.params.username
+      username: req.body.username
     }
   })
 

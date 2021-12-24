@@ -2,8 +2,27 @@ import express from 'express'
 
 const blogsRouter = express.Router()
 
-import {Blog} from '../models/index.js';
-import 'express-async-errors'  // error handling middleware
+import {Blog, User} from '../models/index.js';
+import 'express-async-errors'
+import jwt from 'jsonwebtoken';
+import {SECRET} from '../util/config.js';  // error handling middleware
+
+// middleware
+const tokenExtractor = (req, res, next)=>{
+  const authorization = req.get('Authorization')
+  if(authorization?.toLowerCase().startsWith('bearer')){
+    try{
+      req.decodedToken = jwt.verify(authorization.substring(7), SECRET)
+    } catch (error) {
+      res.status(401).json({error: 'token invalid'})
+    }
+  } else{
+    res.status(401).json({error: 'token missing'})
+  }
+  next()
+}
+
+blogsRouter.use(tokenExtractor)
 
 blogsRouter.get('/', async (req, res) => {
     const blogs = await Blog.findAll()
@@ -11,8 +30,11 @@ blogsRouter.get('/', async (req, res) => {
 });
 
 blogsRouter.post('/', async (req, res) => {
-
-    const note = await Blog.create(req.body)
+    const user = await User.findByPk(req.decodedToken.id)
+    const note = await Blog.create({
+      ...req.body,
+      userId: user.id
+    })
     res.json(note)
 
   // error is handled in middleware express-async-errors
