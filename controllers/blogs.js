@@ -42,7 +42,9 @@ blogsRouter.post('/', async (req, res) => {
 });
 
 blogsRouter.delete('/:id', async (req, res) => {
-  const success = await Blog.destroy({where: {id: req.params.id}})
+  const user = await User.findByPk(req.decodedToken.id)
+
+  const success = await Blog.destroy({where: {id: req.params.id, userId: user.id}})
   if (success) {
     res.status(204).end()
   } else {
