@@ -5,7 +5,8 @@ const blogsRouter = express.Router()
 import {Blog, User} from '../models/index.js';
 import 'express-async-errors'
 import jwt from 'jsonwebtoken';
-import {SECRET} from '../util/config.js';  // error handling middleware
+import {SECRET} from '../util/config.js';
+import {Op} from 'sequelize';  // error handling middleware
 
 // middleware
 const tokenExtractor = (req, res, next)=>{
@@ -25,11 +26,18 @@ const tokenExtractor = (req, res, next)=>{
 
 
 blogsRouter.get('/', async (req, res) => {
-    const blogs = await Blog.findAll({
+  const where = {}
+  if(req.query.search){
+    where.title = {
+      [Op.substring]: req.query.search
+    }
+  }
+  const blogs = await Blog.findAll({
       include: {
         model: User,
         attributes: ['name']
-      }
+      },
+    where: where
     })
     res.json(blogs)
 });
