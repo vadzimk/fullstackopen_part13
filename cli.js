@@ -6,11 +6,13 @@ import {connectToDB} from './util/db.js';
 import blogsRouter from './controllers/blogs.js'
 import userRouter from './controllers/users.js';
 import loginRouter from './controllers/login.js';
+import authorsRouter from './controllers/authors.js';
 
 app.use(express.json())
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', userRouter)
 app.use('/api/login', loginRouter)
+app.use('/api/authors', authorsRouter)
 const start = async () => {
   await connectToDB()
   app.listen(PORT, () => {
