@@ -49,7 +49,8 @@ blogsRouter.get('/', async (req, res) => {
       model: User,
       attributes: ['name']
     },
-    where: clause
+    where: clause,
+    order: ['likes', 'DESC']
   })
   res.json(blogs)
 });
