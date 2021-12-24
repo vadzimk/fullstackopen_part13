@@ -1,11 +1,16 @@
 import express from 'express'
-import {User} from '../models/index.js';
+import {Blog, User} from '../models/index.js';
 
 const userRouter = express.Router()
 import 'express-async-errors'  // error handling middleware
 
 userRouter.get('/', async (req, res) => {
-  const users = await User.findAll()
+  const users = await User.findAll({
+    include:{
+      model: Blog,
+      attributes: ['title']
+    }
+  })
   res.json(users)
 })
 

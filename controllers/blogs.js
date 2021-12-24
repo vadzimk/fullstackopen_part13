@@ -22,14 +22,19 @@ const tokenExtractor = (req, res, next)=>{
   next()
 }
 
-blogsRouter.use(tokenExtractor)
+
 
 blogsRouter.get('/', async (req, res) => {
-    const blogs = await Blog.findAll()
+    const blogs = await Blog.findAll({
+      include: {
+        model: User,
+        attributes: ['name']
+      }
+    })
     res.json(blogs)
 });
 
-blogsRouter.post('/', async (req, res) => {
+blogsRouter.post('/', tokenExtractor, async (req, res) => {
     const user = await User.findByPk(req.decodedToken.id)
     const note = await Blog.create({
       ...req.body,
@@ -41,7 +46,7 @@ blogsRouter.post('/', async (req, res) => {
 
 });
 
-blogsRouter.delete('/:id', async (req, res) => {
+blogsRouter.delete('/:id', tokenExtractor, async (req, res) => {
   const user = await User.findByPk(req.decodedToken.id)
 
   const success = await Blog.destroy({where: {id: req.params.id, userId: user.id}})
