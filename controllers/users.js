@@ -2,6 +2,7 @@ import express from 'express'
 import {User} from '../models/index.js';
 
 const userRouter = express.Router()
+import 'express-async-errors'  // error handling middleware
 
 userRouter.get('/', async (req, res) => {
   const users = await User.findAll()
