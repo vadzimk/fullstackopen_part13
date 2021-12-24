@@ -9,46 +9,58 @@ import {SECRET} from '../util/config.js';
 import {Op} from 'sequelize';  // error handling middleware
 
 // middleware
-const tokenExtractor = (req, res, next)=>{
+const tokenExtractor = (req, res, next) => {
   const authorization = req.get('Authorization')
-  if(authorization?.toLowerCase().startsWith('bearer')){
-    try{
+  if (authorization?.toLowerCase().startsWith('bearer')) {
+    try {
       req.decodedToken = jwt.verify(authorization.substring(7), SECRET)
     } catch (error) {
       res.status(401).json({error: 'token invalid'})
     }
-  } else{
+  } else {
     res.status(401).json({error: 'token missing'})
   }
   next()
 }
 
 
-
 blogsRouter.get('/', async (req, res) => {
-  const where = {}
-  if(req.query.search){
-    where.title = {
-      [Op.substring]: req.query.search
+
+  // SELECT * from blog WHERE ("blog"."title" LIKE '%react%' or "blog"."author" LIKE '%test%');
+  let clause = {}
+  if (req.query.search) {
+    clause = {
+      [Op.or]: [
+        {
+          title: {
+            [Op.substring]: req.query.search
+          }
+        },
+        {
+          author: {
+            [Op.substring]: req.query.search
+          }
+        }
+      ]
     }
   }
   const blogs = await Blog.findAll({
-      include: {
-        model: User,
-        attributes: ['name']
-      },
-    where: where
-    })
-    res.json(blogs)
+    include: {
+      model: User,
+      attributes: ['name']
+    },
+    where: clause
+  })
+  res.json(blogs)
 });
 
 blogsRouter.post('/', tokenExtractor, async (req, res) => {
-    const user = await User.findByPk(req.decodedToken.id)
-    const note = await Blog.create({
-      ...req.body,
-      userId: user.id
-    })
-    res.json(note)
+  const user = await User.findByPk(req.decodedToken.id)
+  const note = await Blog.create({
+    ...req.body,
+    userId: user.id
+  })
+  res.json(note)
 
   // error is handled in middleware express-async-errors
 
